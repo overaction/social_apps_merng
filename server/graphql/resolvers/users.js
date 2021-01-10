@@ -5,10 +5,46 @@ const {SECRET_KEY} = require('../../config/keys');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {UserInputError} = require('apollo-server');
-const {validateRegisterInput} = require('../../util/validators');
+const {validateRegisterInput, validateLoginInput} = require('../../util/validators');
+
+function generateToken(user) {
+    const token = jwt.sign({
+        id: user._id,
+        email: user.email,
+        username: user.username
+    },SECRET_KEY,{expiresIn: '1h'})
+    return token;
+}
 
 module.exports.userResolver = {
     Mutation: {
+        async login(_, { username, password }) {
+            const {errors,valid} = validateLoginInput(username, password);
+            if(!valid) {
+                console.log(valid);
+                throw new UserInputError('Errors',{errors});
+            }
+            const user = await User.findOne({username});
+            if(!user) {
+                console.log('errrpr');
+                errors.general = "User not found"
+                throw new UserInputError('user not found', {errors});
+            }
+            console.log(user);
+            const match = await bcrypt.compare(password, user.password);
+            console.log(password,user.password);
+            if(!match) {
+                errors.general = "아이디 또는 패스워드를 확인해주세요";
+                throw new UserInputError('Wrong', {errors});
+            }
+            const token = generateToken(user);
+            console.log(token);
+            return {
+                ...user._doc,
+                id: user._id,
+                token
+            };
+        },
         async register(_, {registerInput: {username, email, password, confirmPassword}}) {
             // TODO: validate user data
             const {valid, errors} = validateRegisterInput(username, email, password, confirmPassword);
@@ -26,7 +62,7 @@ module.exports.userResolver = {
                 })
             }
 
-            passsword = await bcrypt.hash(password,12);
+            password = await bcrypt.hash(password,12);
             const newUser = new User({
                 username,
                 email,
@@ -35,13 +71,9 @@ module.exports.userResolver = {
                 createdAt: new Date().toISOString()
             });
             const res = await newUser.save();
-            console.log(res);
-            const token = jwt.sign({
-                id: res._id,
-                email: res.email,
-                username: res.username
-            },SECRET_KEY,{expiresIn: '1h'})
-            console.log(res._doc);
+            
+            const token = generateToken(res._doc);
+            console.log(token);
             return {
                 id:res._id,
                 username:res.username,
