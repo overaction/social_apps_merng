@@ -1,3 +1,4 @@
+const { AuthenticationError } = require('apollo-server');
 const mongoose = require('mongoose');
 const Post = mongoose.model("Post");
 
@@ -39,6 +40,21 @@ module.exports.postResolver = {
             });
             const post = await newPost.save();
             return post;
+        },
+        async deletePost(_,{postId},context) {
+            checkAuth(context);
+            const userinfo = context.req.userinfo;
+            try {
+                const post = await Post.findOne({_id: postId});
+                if(userinfo.username === post.username) {
+                    await post.delete();
+                    return '게시글이 삭제되었습니다.'
+                } else {
+                    throw new AuthenticationError('게시글 삭제가 실패')
+                }
+            } catch (err){
+                throw new Error(err);
+            }
         }
     }
 }
