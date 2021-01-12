@@ -39,6 +39,10 @@ module.exports.postResolver = {
                 createdAt: new Date().toISOString()
             });
             const post = await newPost.save();
+
+            context.pubsub.publish('NEW_POST',{
+                newPost: post
+            })
             return post;
         },
         async deletePost(_,{postId},context) {
@@ -79,6 +83,11 @@ module.exports.postResolver = {
                 return post;
             }
             else throw new UserInputError('포스트가 존재하지 않습니다');
+        }
+    },
+    Subscription: {
+        newPost: {
+            subscribe: (_, __, {pubsub}) => pubsub.asyncIterator('NEW_POST')
         }
     }
 }
