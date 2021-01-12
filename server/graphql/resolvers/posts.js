@@ -1,4 +1,4 @@
-const { AuthenticationError } = require('apollo-server');
+const { AuthenticationError, UserInputError } = require('apollo-server');
 const mongoose = require('mongoose');
 const Post = mongoose.model("Post");
 
@@ -55,6 +55,30 @@ module.exports.postResolver = {
             } catch (err){
                 throw new Error(err);
             }
+        },
+        async likePost(_,{postId},context) {
+            checkAuth(context);
+            const userinfo = context.req.userinfo;
+            let post = await Post.findById(postId);
+            if(post) {
+                if(post.likes.find(like => like.username === userinfo.username)) {
+                    // 이미 좋아요 표시를 함
+                    post.likes = post.likes.filter(like => like.username !== userinfo.username);
+                }
+                else {
+                    const like = {
+                        username: userinfo.username,
+                        createdAt: new Date().toISOString()
+                    }
+                    // 새로 좋아요 표시
+                    post = await Post.findByIdAndUpdate(postId, {
+                        $push:{likes:like}
+                    },{new:true})
+                }
+                await post.save();
+                return post;
+            }
+            else throw new UserInputError('포스트가 존재하지 않습니다');
         }
     }
 }
