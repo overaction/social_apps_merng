@@ -2,26 +2,23 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import React, { useState } from 'react'
 import { Button, Form } from 'semantic-ui-react'
+import { useForm } from '../utils/hooks';
+
 const Register = (props) => {
     const [errors, setErrors] = useState({});
-    const [values, setValues] = useState({
+
+    const {onChange, onSubmit, values} = useForm(registerUser,{
         username: '',
         email: '',
         password: '',
         confirmPassword: ''
-    })
-
-    const onChange = (e) => {
-        setValues({
-            ...values,
-            [e.target.name]:e.target.value
-        })
-    };
+    });
 
     const [addUser, {loading,error}] = useMutation(REGISTER_USER, {
         update(cache,result) {
             console.log(result);
             props.history.push('/');
+            props.history.go(0);
         },
         onError(err) {
             console.log(err.graphQLErrors);
@@ -31,8 +28,8 @@ const Register = (props) => {
         variables: values
     });
 
-    const onSubmit = async (e) => {
-        e.preventDefault();
+    // function 은 hoisting에 의해서 최상단으로 끌어올려진다
+    function registerUser() {
         addUser();
     }
 
