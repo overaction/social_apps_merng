@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 import 'semantic-ui-css/semantic.min.css';
-import { Container } from 'semantic-ui-react'
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';

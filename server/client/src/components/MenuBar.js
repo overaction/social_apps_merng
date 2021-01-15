@@ -5,14 +5,14 @@ const MenuBar = () => {
     const location = useLocation();
     const path = location.pathname.substr(1);
     const [activeItem, setActiveItem] = useState(path);
-    
+    console.log(path);
     const handleItemClick = (e, { name }) => setActiveItem(name);
     return (
         <div>
             <Menu pointing secondary color="teal" size="massive">
                 <Menu.Item
                     name="home"
-                    active={activeItem === "home"}
+                    active={activeItem === ""}
                     onClick={handleItemClick}
                     as={Link}
                     to="/"

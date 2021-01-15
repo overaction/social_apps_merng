@@ -50,14 +50,14 @@ module.exports.userResolver = {
             const {valid, errors} = validateRegisterInput(username, email, password, confirmPassword);
             if(!valid) {
                 console.log(valid);
-                throw new UserInputError('Errors',{errors});
+                throw new UserInputError('Errors',{errors})
             }
             // TODO: Make sure user doesnt already exist
             const user = await User.findOne({username})
             if(user) {
-                throw new UserInputError('Username is taken', {
+                throw new UserInputError('해당 닉네임이 이미 존재합니다', {
                     errors: {
-                        username: 'This username is taken'
+                        username: '해당 닉네임이 이미 존재합니다'
                     }
                 })
             }

@@ -4,3 +4,9 @@
     font-size: 3rem;
     margin-top: 10px;
 }
+
+.form-container {
+    width: 400px;
+    padding-top: 50px;
+    margin: auto;
+}

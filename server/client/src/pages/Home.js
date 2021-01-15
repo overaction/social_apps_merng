@@ -1,12 +1,12 @@
 import React from 'react'
 import {useQuery} from '@apollo/react-hooks'
 import gql from 'graphql-tag';
-import { Grid, Image } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
 import PostCard from '../components/PostCard';
 
 const Home = () => {
     const {loading, err, data} = useQuery(FETCH_POSTS_QUERY);
-    const {getPosts:posts} = data;
+    
     return (
         <Grid columns={3}>
             <Grid.Row className="page-title">
@@ -16,7 +16,7 @@ const Home = () => {
                 {loading ? (
                     <h1>Loading post...</h1>
                 ) : (
-                    posts && posts.map(post => (
+                    data.getPosts && data.getPosts.map(post => (
                         <Grid.Column key={post.id} style={{marginBottom: 20}}>
                             <PostCard post={post} />
                         </Grid.Column>
