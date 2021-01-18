@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import React from 'react'
+import React, { useState } from 'react'
 import {Button, Form} from 'semantic-ui-react';
 import { FETCH_POSTS_QUERY } from '../utils/graphql';
 import { useForm } from '../utils/hooks';
@@ -9,6 +9,7 @@ const PostForm = () => {
     const {values, onChange, onSubmit} = useForm(createPostCallback, {
         body: ''
     });
+    const [errors, setErrors] = useState({});
 
     const [createPost, {loading,error}] = useMutation(CREATE_POST_MUTATION, {
         update(cache,result) {
@@ -25,6 +26,10 @@ const PostForm = () => {
             })
             values.body = ''
         },
+        onError(err) {
+            console.log(err.graphQLErrors[0].message);
+            setErrors(err.graphQLErrors[0].message);
+        },
         variables: values
     });
 
@@ -33,20 +38,27 @@ const PostForm = () => {
     }
 
     return (
-        <Form onSubmit={onSubmit}>
-            <h2>Create a Post:</h2>
-            <Form.Field>
-                <Form.Input
-                    placeholder="Hi world!"
-                    name="body"
-                    onChange={onChange}
-                    value={values.body}
-                />
-                <Button type="submit" color="teal">
-                    Submit
-                </Button>
-            </Form.Field>
-        </Form>
+        <>
+            <Form onSubmit={onSubmit}>
+                <h2>Create a Post:</h2>
+                <Form.Field>
+                    <Form.Input
+                        placeholder="Hi world!"
+                        name="body"
+                        onChange={onChange}
+                        value={values.body}
+                    />
+                    <Button type="submit" color="teal">
+                        Submit
+                    </Button>
+                </Form.Field>
+            </Form>
+            {Object.keys(errors).length > 0 && (
+                <div className="ui error message">
+                    <ul className="list">로그인이 필요합니다.</ul>
+                </div>
+            )}
+        </>
     );
 }
 
