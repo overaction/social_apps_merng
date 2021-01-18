@@ -10,6 +10,8 @@ function AuthRoute({ component: Component, ...rest}) {
     console.log(rest);
     return (
         <Route 
+            // rest가 없다면 exact path가 없기 때문에 다른 페이지도 중첩되어 표시된다
+            {...rest}
             // render 를 통해 context가 저장되어 있다면 무조건 홈으로 가도록 한다
             // https://mingcoder.me/2019/12/04/Programming/React/react-router-component-vs-render/
             render={props => (
