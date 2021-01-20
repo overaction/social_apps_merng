@@ -9,7 +9,7 @@ const PostForm = () => {
     const {values, onChange, onSubmit} = useForm(createPostCallback, {
         body: ''
     });
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState('');
 
     const [createPost, {loading,error}] = useMutation(CREATE_POST_MUTATION, {
         update(cache,result) {
@@ -47,15 +47,16 @@ const PostForm = () => {
                         name="body"
                         onChange={onChange}
                         value={values.body}
+                        error={error ? true : false}
                     />
                     <Button type="submit" color="teal">
                         Submit
                     </Button>
                 </Form.Field>
             </Form>
-            {Object.keys(errors).length > 0 && (
-                <div className="ui error message">
-                    <ul className="list">로그인이 필요합니다.</ul>
+            {Object.keys.length && (
+                <div className="ui error message" style={{marginBottom: 20}}>
+                    <ul className="list">{errors}</ul>
                 </div>
             )}
         </>

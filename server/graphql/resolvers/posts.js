@@ -30,7 +30,7 @@ module.exports.postResolver = {
     },
     Mutation: {
         async createPost(_,{body}, context) {
-            if(body.trim() === '') throw new Error('Post가 비어있습니다')
+            if(body.trim() === '') throw new Error('내용을 입력해주세요')
             checkAuth(context);
             const userinfo = context.req.userinfo;
             const newPost = new Post({

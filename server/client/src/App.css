@@ -10,3 +10,7 @@
     padding-top: 50px;
     margin: auto;
 }
+
+.ui.teal.button:focus {
+    background-color: #00b5ad !important;
+}
