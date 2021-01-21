@@ -54,7 +54,7 @@ const PostForm = () => {
                     </Button>
                 </Form.Field>
             </Form>
-            {Object.keys.length && (
+            {error && (
                 <div className="ui error message" style={{marginBottom: 20}}>
                     <ul className="list">{errors}</ul>
                 </div>
