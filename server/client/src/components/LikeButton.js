@@ -1,12 +1,13 @@
 import { gql, useMutation } from '@apollo/react-hooks'
 import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { AuthContext } from '../context/auth';
 
 const LikeButton = ({post:{id,likeCount,likes}}) => {
     const {user} = useContext(AuthContext);
     const [liked, setLiked] = useState(false);
+    const history = useHistory();
     useEffect(() => {
         if(user && likes.find(like => like.username === user.username))
             setLiked(true);
@@ -14,7 +15,11 @@ const LikeButton = ({post:{id,likeCount,likes}}) => {
     },[user,likes]);
 
     const [likePost, {loading,error}] = useMutation(LIKE_POST_MUTATION, {
-        variables: {postId: id}
+        variables: {postId: id},
+        onError() {
+            history.push('/');
+            window.location.reload();
+        }
     });
 
     return (

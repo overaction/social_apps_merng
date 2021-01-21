@@ -7,6 +7,7 @@ import DeleteButton from '../components/DeleteButton';
 import LikeButton from '../components/LikeButton';
 import { AuthContext } from '../context/auth';
 import moment from 'moment';
+import MyPopup from '../utils/MyPopup';
 
 const SinglePost = () => {
     const [post, setPost] = useState(null);
@@ -45,6 +46,7 @@ const SinglePost = () => {
         onError(err) {
             console.log(err.graphQLErrors[0].message);
             history.push('/');
+            window.location.reload();
         },
     })
 
@@ -75,60 +77,86 @@ const SinglePost = () => {
                             <hr />
                             <Card.Content extra>
                                 <LikeButton post={{ id, likeCount, likes }} />
-                                <Button
-                                    as="div"
-                                    labelPosition="right"
-                                    onClick={() =>
-                                        console.log("Comment on post")
-                                    }
-                                >
-                                    <Button basic color="blue">
-                                        <Icon name="comments" />
+                                <MyPopup content="Comment on Post">
+                                    <Button
+                                        as="div"
+                                        labelPosition="right"
+                                        onClick={() =>
+                                            console.log("Comment on post")
+                                        }
+                                    >
+                                        <Button basic color="blue">
+                                            <Icon name="comments" />
+                                        </Button>
+                                        <Label
+                                            basic
+                                            color="blue"
+                                            pointing="left"
+                                        >
+                                            {commentCount}
+                                        </Label>
                                     </Button>
-                                    <Label basic color="blue" pointing="left">
-                                        {commentCount}
-                                    </Label>
-                                </Button>
+                                </MyPopup>
                                 {user && user.username === username && (
-                                    <DeleteButton postId={id} callback={deletePostCallback}/>
+                                    <DeleteButton
+                                        postId={id}
+                                        callback={deletePostCallback}
+                                    />
                                 )}
                             </Card.Content>
                         </Card>
                         {user && (
                             <Card fluid>
-                                <p style={{textAlign: 'center', margin: 0}}>Post a Comment</p>
+                                <p style={{ textAlign: "center", margin: 0 }}>
+                                    Post a Comment
+                                </p>
                                 <Form>
                                     <Card.Content>
-                                    <div className="ui action input fluid">
-                                        <input
-                                            type="text"
-                                            placeholder="Comment..."
-                                            name="comment"
-                                            value={comment}
-                                            onChange={e => setComment(e.target.value)}
-                                            ref={commentInputRef}
-                                        />
-                                        <button 
-                                            type="submit" 
-                                            className="ui button teal" 
-                                            disabled={comment.trim() === ''} 
-                                            onClick={submitComment}>
-                                        Submit
-                                        </button>
-                                    </div>
+                                        <div className="ui action input fluid">
+                                            <input
+                                                type="text"
+                                                placeholder="Comment..."
+                                                name="comment"
+                                                value={comment}
+                                                onChange={(e) =>
+                                                    setComment(e.target.value)
+                                                }
+                                                ref={commentInputRef}
+                                            />
+                                            <button
+                                                type="submit"
+                                                className="ui button teal"
+                                                disabled={comment.trim() === ""}
+                                                onClick={submitComment}
+                                            >
+                                                Submit
+                                            </button>
+                                        </div>
                                     </Card.Content>
                                 </Form>
                             </Card>
                         )}
-                        {comments.map(comment => (
+                        {comments.map((comment) => (
                             <Card fluid key={comment.id}>
                                 <Card.Content>
-                                    {user ? user.username === comment.username && (
-                                        <DeleteButton postId={id} commentId={comment.id} />
-                                    ) : ''}
-                                    <Card.Header>{comment.username}</Card.Header>
-                                    <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
-                                    <Card.Description>{comment.body}</Card.Description>
+                                    {user
+                                        ? user.username ===
+                                            comment.username && (
+                                            <DeleteButton
+                                                postId={id}
+                                                commentId={comment.id}
+                                            />
+                                        )
+                                        : ""}
+                                    <Card.Header>
+                                        {comment.username}
+                                    </Card.Header>
+                                    <Card.Meta>
+                                        {moment(comment.createdAt).fromNow()}
+                                    </Card.Meta>
+                                    <Card.Description>
+                                        {comment.body}
+                                    </Card.Description>
                                 </Card.Content>
                             </Card>
                         ))}
