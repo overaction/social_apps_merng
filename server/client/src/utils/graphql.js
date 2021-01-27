@@ -21,3 +21,20 @@ export const FETCH_POSTS_QUERY = gql`
         }
     }
 `;
+
+export const ALARM_MUTATION = gql`
+    mutation createAlarm($username: String!, $body: String!) {
+        createAlarm(username: $username, body: $body) {
+            id
+            email
+            username
+            createdAt
+            alarms {
+                id
+                username
+                createdAt
+                body
+            }
+        }
+    }
+`;

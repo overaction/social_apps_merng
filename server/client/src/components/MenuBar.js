@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Menu } from 'semantic-ui-react'
 import {Link,useLocation} from 'react-router-dom';
 import { AuthContext } from '../context/auth';
+import Alert from './Alert';
 const MenuBar = () => {
     const location = useLocation();
     const path = location.pathname.substr(1);
@@ -21,6 +22,7 @@ const MenuBar = () => {
                     to="/"
                 />
                 <Menu.Menu position="right">
+                    <Alert />
                     <Menu.Item
                         name="logout"
                         onClick={contexts.logout}

@@ -9,8 +9,12 @@ module.exports = {
         },
         commentCount: (parent) => parent.comments.length
     },
+    User: {
+        alarmCount: (parent) => parent.alarms.length
+    },
     Query: {
-        ...postResolver.Query
+        ...postResolver.Query,
+        ...userResolver.Query
     },
     Mutation: {
         ...userResolver.Mutation,

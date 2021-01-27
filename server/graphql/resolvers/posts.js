@@ -80,11 +80,12 @@ module.exports.postResolver = {
                         $push:{likes:like}
                     },{new:true})
                 }
+                // 저장
                 await post.save();
                 return post;
             }
             else throw new UserInputError('포스트가 존재하지 않습니다');
-        }
+        },
     },
     Subscription: {
         newPost: {

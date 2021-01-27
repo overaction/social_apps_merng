@@ -3,18 +3,34 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { AuthContext } from '../context/auth';
+import { ALARM_MUTATION } from '../utils/graphql';
 
-const LikeButton = ({post:{id,likeCount,likes}}) => {
+const LikeButton = ({post:{username,id,likeCount,likes}}) => {
     const {user} = useContext(AuthContext);
     const [liked, setLiked] = useState(false);
     const history = useHistory();
     useEffect(() => {
-        if(user && likes.find(like => like.username === user.username))
+        if(user && likes.find(like => like.username === user.username)) {
             setLiked(true);
+        }
         else setLiked(false);
     },[user,likes]);
+    console.log(username);
+
+    const [createAlarm] = useMutation(ALARM_MUTATION, {
+        update(cache,result) {
+            console.log('alarm created');
+        },
+        variables: {
+            username,
+            body: '좋아요 표시를 했습니다'
+        }
+    })
 
     const [likePost, {loading,error}] = useMutation(LIKE_POST_MUTATION, {
+        update(cache, result) {
+            if(liked === false) createAlarm();
+        },
         variables: {postId: id},
         onError() {
             history.push('/');

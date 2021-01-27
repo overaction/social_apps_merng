@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {UserInputError} = require('apollo-server');
 const {validateRegisterInput, validateLoginInput} = require('../../util/validators');
+const checkAuth = require('../../util/check-auth');
 
 function generateToken(user) {
     const token = jwt.sign({
@@ -17,6 +18,21 @@ function generateToken(user) {
 }
 
 module.exports.userResolver = {
+    Query: {
+        async getUser(_,{username}) {
+            try {
+                const user = await User.findOne({username});
+                if(user) {
+                    return user;
+                }
+                else {
+                    throw new Error('User not found')
+                }
+            } catch(err) {
+                throw new Error(err);
+            }
+        }
+    }, 
     Mutation: {
         async login(_, { username, password }) {
             const {errors,valid} = validateLoginInput(username, password);
@@ -46,13 +62,11 @@ module.exports.userResolver = {
             };
         },
         async register(_, {registerInput: {username, email, password, confirmPassword}}) {
-            // TODO: validate user data
             const {valid, errors} = validateRegisterInput(username, email, password, confirmPassword);
             if(!valid) {
                 console.log(valid);
                 throw new UserInputError('Errors',{errors})
             }
-            // TODO: Make sure user doesnt already exist
             const user = await User.findOne({username})
             if(user) {
                 throw new UserInputError('해당 닉네임이 이미 존재합니다', {
@@ -82,6 +96,70 @@ module.exports.userResolver = {
                 createdAt:res.createdAt,
                 token
             }
+        },
+        async createAlarm(_,{username,body},context) {
+            checkAuth(context);
+            const userinfo = context.req.userinfo;
+            let otherUser = await User.findOne({username});
+            if(!otherUser) {
+                console.log('errrpr');
+                console.log(otherUser);
+                throw new UserInputError('user not found');
+            }
+            else {
+                console.log('alarm!')
+                const newAlarm = {
+                    username: userinfo.username,
+                    body,
+                    createdAt: new Date().toISOString(),
+                }
+                // 알람 추가
+                otherUser = await User.findByIdAndUpdate(otherUser._id, {
+                    $push: {alarms: newAlarm}
+                }, {new: true})
+            }
+            await otherUser.save();
+            return otherUser;
+        },
+        async deleteAlarm(_,{alarmId},context) {
+            checkAuth(context);
+            const userinfo = context.req.userinfo;
+            const username = userinfo.username;
+            let user = await User.findOne({username});
+            console.log(user);
+            console.log(userinfo.id);
+            if(!user) {
+                console.log('errrpr');
+                throw new UserInputError('user not found');
+            }
+            else {
+                const newAlarm = {
+                    _id: alarmId,
+                }
+                // 알람 삭제
+                user = await User.findByIdAndUpdate(userinfo.id, {
+                    $pull: {alarms: newAlarm}
+                }, {new: true})
+            }
+            await user.save();
+            return user;
+        },
+        async deleteAllAlarms(_,{},context) {
+            checkAuth(context);
+            const userinfo = context.req.userinfo;
+            const username = userinfo.username;
+            let user = await User.findOne({username});
+            if(!user) {
+                console.log('errrpr');
+                throw new UserInputError('user not found');
+            }
+            else {
+                user = await User.findByIdAndUpdate(userinfo.id, {
+                    $unset: {alarms:1}
+                },{new: true})
+            }
+            await user.save();
+            return user;
         }
     }
 }

@@ -14,3 +14,30 @@
 .ui.teal.button:focus {
     background-color: #00b5ad !important;
 }
+
+.alarmBtn {
+    border: 0;
+    outline: 0;
+    box-shadow: none !important;
+}
+
+.deleteAlarm {
+    box-shadow: none;
+    background-color: transparent !important;
+    color: teal !important;
+}
+
+.clearAllBtn {
+    margin-left: 200px !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+.alarm-Container {
+    z-index: 9999;
+    position: fixed !important;
+    width: 400px !important;
+    top: 2.3rem;
+    right: 10rem;
+}
+

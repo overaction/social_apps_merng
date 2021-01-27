@@ -22,12 +22,20 @@ module.exports = gql`
         createdAt: String!
         username: String!
     }
+    type Alarm {
+        id: ID!
+        body: String!
+        username: String!
+        createdAt: String!
+    }
     type User {
         id: ID!
         email: String!
         token: String!
         username: String!
         createdAt: String!
+        alarms: [Alarm]!
+        alarmCount: Int!
     }
     input RegisterInput {
         username: String!
@@ -38,6 +46,7 @@ module.exports = gql`
     type Query {
         getPosts: [Post]
         getPost(postId: ID!): Post
+        getUser(username: String!): User
     }
     type Mutation {
         register(registerInput: RegisterInput): User!
@@ -47,6 +56,9 @@ module.exports = gql`
         createComment(postId: ID!, body: String!): Post!
         deleteComment(postId: ID!, commentId: ID!): Post!
         likePost(postId: ID!): Post!
+        createAlarm(username: String!, body: String!): User!
+        deleteAlarm(alarmId: ID!): User!
+        deleteAllAlarms: User!
     }
     type Subscription {
         newPost: Post!

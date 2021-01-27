@@ -1,7 +1,7 @@
 const {AuthenticationError} = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const {SECRET_KEY} = require('../config/keys');
-module.exports = (context,res,next) => {
+module.exports = (context) => {
     const {authorization} = context.req.headers;
     if(!authorization) {
         throw new Error('Authentication header must be provided');

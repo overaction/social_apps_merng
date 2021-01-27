@@ -8,6 +8,7 @@ import LikeButton from '../components/LikeButton';
 import { AuthContext } from '../context/auth';
 import moment from 'moment';
 import MyPopup from '../utils/MyPopup';
+import { ALARM_MUTATION } from '../utils/graphql';
 
 const SinglePost = () => {
     const [post, setPost] = useState(null);
@@ -24,7 +25,6 @@ const SinglePost = () => {
     useEffect(() => {
         if(data) {
             setPost(data.getPost)
-            console.log(data);
         }
     },[data])
     const history = useHistory();
@@ -38,6 +38,7 @@ const SinglePost = () => {
         update(cache, result) {
             commentInputRef.current.blur();
             setComment('');
+            createAlarm();
         },
         variables: {
             postId,
@@ -48,6 +49,16 @@ const SinglePost = () => {
             history.push('/');
             window.location.reload();
         },
+    });
+
+    const [createAlarm] = useMutation(ALARM_MUTATION, {
+        update(cache,result) {
+            console.log('alarm created');
+        },
+        variables: {
+            username: post ? post.username : 'load',
+            body: '댓글을 남겼습니다'
+        }
     })
 
     let postMarkup;
@@ -76,7 +87,7 @@ const SinglePost = () => {
                             </Card.Content>
                             <hr />
                             <Card.Content extra>
-                                <LikeButton post={{ id, likeCount, likes }} />
+                                <LikeButton post={{ username, id, likeCount, likes }} />
                                 <MyPopup content="Comment on Post">
                                     <Button
                                         as="div"
