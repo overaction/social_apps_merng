@@ -23,14 +23,15 @@ export const FETCH_POSTS_QUERY = gql`
 `;
 
 export const ALARM_MUTATION = gql`
-    mutation createAlarm($username: String!, $body: String!) {
-        createAlarm(username: $username, body: $body) {
+    mutation createAlarm($username: String!, $body: String!, $postId: ID!) {
+        createAlarm(username: $username, body: $body, postId: $postId) {
             id
             email
             username
             createdAt
             alarms {
                 id
+                postId
                 username
                 createdAt
                 body

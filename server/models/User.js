@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const {ObjectId} = mongoose.Schema.Types;
 const userSchema = new mongoose.Schema({
     username: String,
     password: String,
@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     alarms: [{
         body: String,
         username: String,
-        createdAt: String
+        createdAt: String,
+        postId: String
     }],
 });
 

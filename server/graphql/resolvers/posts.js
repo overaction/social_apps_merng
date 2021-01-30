@@ -8,6 +8,8 @@ module.exports.postResolver = {
     Query: {
         async getPosts() {
             try {
+                const post = await Post.find().populate('user')
+                console.log(post);
                 const posts = await Post.find().sort({createdAt: -1});
                 return posts;
             } catch(err) {

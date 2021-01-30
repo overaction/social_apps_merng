@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import { Button, Card, Feed, Icon } from 'semantic-ui-react';
 import { AuthContext } from '../context/auth';
 import DeleteAlarmBtn from './DeleteAlarmBtn';
@@ -10,12 +11,12 @@ const Alert = () => {
     const [visible, setVisible] = useState(false);
     const [alarms, setAlarms] = useState({});
     const {user} = useContext(AuthContext);
-    const {data} = useQuery(FETCH_USER_QUERY, {
+    const {loading,err,data} = useQuery(FETCH_USER_QUERY, {
         variables: {
             username: user.username
         }
     });
-    const [deleteAllAlarms, {loading,error}] = useMutation(DELETE_ALL_ALARMS, {
+    const [deleteAllAlarms] = useMutation(DELETE_ALL_ALARMS, {
         update(cache,result) {
             setAlarms([]);
         }
@@ -26,7 +27,7 @@ const Alert = () => {
             console.log(data);
             console.log(alarms)
         }
-    },[data,alarms]);
+    },[data]);
 
     return (
         <>
@@ -36,13 +37,18 @@ const Alert = () => {
                 floated="right"
                 onClick={() => setVisible(prev => !prev)}
                 className="alarmBtn"
+                
             >
-                <Icon
-                    name="alarm"
-                    color="blue"
-                    size="large"
-                    style={{ margin: 0, marginTop: 4 }}
-                />
+                    <Icon.Group>
+                        <Icon
+                            name="alarm"
+                            color="blue"
+                            size="large"
+                            style={{ margin: 0, marginTop: 4 }}
+                            
+                        />
+                        {alarms.length > 0 && <Icon corner name="circle" color="red" size="small">{alarms.length}</Icon>}
+                    </Icon.Group>
             </Button>
             {visible && (
                 <Card className="alarm-Container">
@@ -58,7 +64,7 @@ const Alert = () => {
                         )}
                     </Card.Content>
                     <Card.Content>
-                        {alarms ? (
+                        {alarms.length ? (
                             alarms.map(alarm => (
                                 <div style={{display:"flex", justifyContent: "space-between"}}>
                                     <Feed key={alarm.createdAt} style={{marginRight: 30}}>
@@ -68,7 +74,9 @@ const Alert = () => {
                                                 <Feed.Date content={moment(alarm.createdAt).fromNow()} />
                                                 <Feed.Summary>
                                                     {/*TODO: 눌렀을 때 해당 게시글로 이동 */}
+                                                    <Link to={`/posts/${alarm.postId}`}>
                                                     {alarm.username}님이 {alarm.body}.
+                                                    </Link>
                                                 </Feed.Summary>
                                             </Feed.Content>
                                         </Feed.Event>
@@ -93,6 +101,7 @@ const FETCH_USER_QUERY = gql`
                 username
                 createdAt
                 body
+                postId
             }
         }
     }

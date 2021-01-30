@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
-
+const Post = mongoose.model('Post');
 const {SECRET_KEY} = require('../../config/keys');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -97,7 +97,7 @@ module.exports.userResolver = {
                 token
             }
         },
-        async createAlarm(_,{username,body},context) {
+        async createAlarm(_,{username,body,postId},context) {
             checkAuth(context);
             const userinfo = context.req.userinfo;
             let otherUser = await User.findOne({username});
@@ -112,6 +112,7 @@ module.exports.userResolver = {
                     username: userinfo.username,
                     body,
                     createdAt: new Date().toISOString(),
+                    postId
                 }
                 // 알람 추가
                 otherUser = await User.findByIdAndUpdate(otherUser._id, {

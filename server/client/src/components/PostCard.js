@@ -24,7 +24,7 @@ const PostCard = ({post : {body, createdAt, id, username, likeCount, commentCoun
                 <Card.Description>{body}</Card.Description>
             </Card.Content>
             <Card.Content extra>
-                <LikeButton post={{ id, likes, likeCount }} />
+                <LikeButton post={{ username, id, likes, likeCount }} />
                 <MyPopup content="Comment on post">
                     <Button
                         labelPosition="right"

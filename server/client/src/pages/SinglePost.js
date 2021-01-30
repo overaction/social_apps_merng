@@ -54,10 +54,12 @@ const SinglePost = () => {
     const [createAlarm] = useMutation(ALARM_MUTATION, {
         update(cache,result) {
             console.log('alarm created');
+            console.log(result);
         },
         variables: {
             username: post ? post.username : 'load',
-            body: '댓글을 남겼습니다'
+            body: '댓글을 남겼습니다',
+            postId
         }
     })
 

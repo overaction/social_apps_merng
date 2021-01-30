@@ -15,15 +15,16 @@ const LikeButton = ({post:{username,id,likeCount,likes}}) => {
         }
         else setLiked(false);
     },[user,likes]);
-    console.log(username);
 
     const [createAlarm] = useMutation(ALARM_MUTATION, {
         update(cache,result) {
             console.log('alarm created');
+            console.log(result);
         },
         variables: {
             username,
-            body: '좋아요 표시를 했습니다'
+            body: '좋아요 표시를 했습니다',
+            postId: id
         }
     })
 

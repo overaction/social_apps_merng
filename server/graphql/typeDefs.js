@@ -27,6 +27,7 @@ module.exports = gql`
         body: String!
         username: String!
         createdAt: String!
+        postId: ID!
     }
     type User {
         id: ID!
@@ -56,7 +57,7 @@ module.exports = gql`
         createComment(postId: ID!, body: String!): Post!
         deleteComment(postId: ID!, commentId: ID!): Post!
         likePost(postId: ID!): Post!
-        createAlarm(username: String!, body: String!): User!
+        createAlarm(username: String!, body: String!, postId: ID!): User!
         deleteAlarm(alarmId: ID!): User!
         deleteAllAlarms: User!
     }
