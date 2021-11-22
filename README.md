@@ -18,7 +18,7 @@
 
 ### 추가사항
 <img src="https://user-images.githubusercontent.com/52850392/132184274-4133e218-2c86-415f-ae54-198e7cb3e89c.png" width="800">
-* 만약 좋아요나 댓글이 작성되었다면 알람이 표시됩니다!
+* 만약 좋아요나 댓글이 작성되었다면 알람이 표시됩니다! - graphql의 subscription 사용
 
 
 ### +도움을 받은 stack
